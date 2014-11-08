@@ -104,25 +104,10 @@ if(!String.prototype.formatNum) {
 			}
 		},
 		merge_holidays:     false,
-		// ------------------------------------------------------------
-		// CALLBACKS. Events triggered by calendar class. You can use
-		// those to affect you UI
-		// ------------------------------------------------------------
-		onAfterEventsLoad:  function(events) {
-			// Inside this function 'this' is the calendar instance
-		},
+
 		onBeforeEventsLoad: function(next) {
 			// Inside this function 'this' is the calendar instance
 			next();
-		},
-		onAfterViewLoad:    function(view) {
-			// Inside this function 'this' is the calendar instance
-		},
-		onAfterModalShown:  function(events) {
-			// Inside this function 'this' is the calendar instance
-		},
-		onAfterModalHidden: function(events) {
-			// Inside this function 'this' is the calendar instance
 		},
 		// -------------------------------------------------------------
 		// INTERNAL USE ONLY. DO NOT ASSIGN IT WILL BE OVERRIDDEN ANYWAY
@@ -712,7 +697,10 @@ if(!String.prototype.formatNum) {
 		this._loadEvents();
 		this._render();
 
-		this.options.onAfterViewLoad.call(this, this.options.view);
+		$(this.context).trigger($.Event('view-loaded.bs-calendar', {
+			calendar: this,
+			view: this.options.view
+		}));
 	};
 
 	Calendar.prototype.navigate = function(where, next) {
@@ -893,7 +881,11 @@ if(!String.prototype.formatNum) {
 		if(!loader) {
 			$.error(this.locale.error_loadurl);
 		}
-		this.options.onBeforeEventsLoad.call(this, function() {
+		var beforeEventsLoadEvent = $.Event('events-loading.bs-calendar', {
+			calendar: this
+		});
+		$(this.context).trigger(beforeEventsLoadEvent);
+		if (!beforeEventsLoadEvent.isDefaultPrevented()) {
 			self.options.events = loader();
 			self.options.events.sort(function(a, b) {
 				var delta;
@@ -903,8 +895,11 @@ if(!String.prototype.formatNum) {
 				}
 				return delta;
 			});
-			self.options.onAfterEventsLoad.call(self, self.options.events);
-		});
+			$(this.context).trigger($.Event('events-loaded.bs-calendar', {
+				calendar: this,
+				events: self.options.events
+			}));
+		}
 	};
 
 	Calendar.prototype._templatePath = function(name) {
@@ -1025,10 +1020,16 @@ if(!String.prototype.formatNum) {
 						}
 					})
 					.on('shown.bs.modal', function() {
-						self.options.onAfterModalShown.call(self, self.options.events);
+						$(self.context).trigger($.Event('shown.bs-calendar.modal', {
+							calendar: this,
+							events: self.options.events
+						}));
 					})
 					.on('hidden.bs.modal', function() {
-						self.options.onAfterModalHidden.call(self, self.options.events);
+						$(self.context).trigger($.Event('hidden.bs-calendar.modal', {
+							calendar: this,
+							events: self.options.events
+						}));
 					})
 					.data('handled.bootstrap-calendar', true).data('handled.event-id', event.id);
 			}
@@ -1160,7 +1161,7 @@ if(!String.prototype.formatNum) {
 			});
 		});
 
-	
+
 
 		// Wait 400ms before updating the modal & attach the mouseenter&mouseleave(400ms is the time for the slider to fade out and slide up)
 		setTimeout(function() {
