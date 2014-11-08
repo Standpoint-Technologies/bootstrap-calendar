@@ -349,6 +349,7 @@ if(!String.prototype.formatNum) {
 		context.css('width', this.options.width).addClass('cal-context');
 
 		this.view();
+		$(context).data('bs-calendar', this);
 		return this;
 	}
 
@@ -1149,6 +1150,11 @@ if(!String.prototype.formatNum) {
 	}
 
 	$.fn.calendar = function(params) {
-		return new Calendar(params, this);
+		var calendar = $(this).data('bs-calendar');
+		if (calendar) {
+			return calendar;
+		} else {
+			return new Calendar(params, this);
+		}
 	}
 }(jQuery));

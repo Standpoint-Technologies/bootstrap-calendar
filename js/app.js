@@ -39,6 +39,9 @@
 		console.log(e);
 	});
 	var calendar = $('#calendar').calendar(options);
+	if (calendar !== $('#calendar').calendar()) {
+		console.log('Error in calendar function');
+	}
 
 	$('.btn-group button[data-calendar-nav]').each(function() {
 		var $this = $(this);
