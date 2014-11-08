@@ -58,12 +58,6 @@ if(!String.prototype.formatNum) {
 		//   returns an array of events (as described in events property description)
 		// - An array containing the events
 		events_source:      '',
-		// Path to templates should end with slash /. It can be as relative
-		// /component/bootstrap-calendar/tmpls/
-		// or absolute
-		// http://localhost/component/bootstrap-calendar/tmpls/
-		tmpl_path:          'tmpls/',
-		tmpl_cache:         true,
 		classes:            {
 			months: {
 				inmonth:  'cal-day-inmonth',
@@ -104,21 +98,21 @@ if(!String.prototype.formatNum) {
 			}
 		},
 		merge_holidays:     false,
-
-		onBeforeEventsLoad: function(next) {
-			// Inside this function 'this' is the calendar instance
-			next();
+		templates: {
+			"day": _.template('<div id="cal-day-box"><div class="row-fluid clearfix cal-row-head"><div class="span1 col-xs-1 cal-cell"><%= cal.locale.time %></div><div class="span11 col-xs-11 cal-cell"><%= cal.locale.events %></div></div><% if(all_day.length) {%><div class="row-fluid clearfix cal-day-hour"><div class="span1 col-xs-1"><b><%= cal.locale.all_day %></b></div><div class="span11 col-xs-11"><% _.each(all_day, function(event){ %><div class="day-highlight dh-<%= event[\'class\'] %>"><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div></div><% }; %><% if(before_time.length) {%><div class="row-fluid clearfix cal-day-hour"><div class="span1 col-xs-3"><b><%= cal.locale.before_time %></b></div><div class="span5 col-xs-5"><% _.each(before_time, function(event){ %><div class="day-highlight dh-<%= event[\'class\'] %>"><span class="cal-hours pull-right"><%= event.end_hour %></span><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div></div><% }; %><div id="cal-day-panel" class="clearfix"><div id="cal-day-panel-hour"><% for(i = 0; i < hours; i++){ %><div class="cal-day-hour"><% for(l = 0; l < cal._hour_min(i); l++){ %><div class="row-fluid cal-day-hour-part"><div class="span1 col-xs-1"><b><%= cal._hour(i, l) %></b></div><div class="span11 col-xs-11"></div></div><% }; %></div><% }; %></div><% _.each(by_hour, function(event){ %><div class="pull-left day-event day-highlight dh-<%= event[\'class\'] %>" style="margin-top: <%= (event.top * 30) %>px; height: <%= (event.lines * 30) %>px"><span class="cal-hours"><%= event.start_hour %> - <%= event.end_hour %></span><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div><% if(after_time.length) {%><div class="row-fluid clearfix cal-day-hour"><div class="span1 col-xs-3"><b><%= cal.locale.after_time %></b></div><div class="span11 col-xs-9"><% _.each(after_time, function(event){ %><div class="day-highlight dh-<%= event[\'class\'] %>"><span class="cal-hours"><%= event.start_hour %></span><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div></div><% }; %></div>'),
+			"events-list": _.template('<span id="cal-slide-tick" style="display: none"></span><div id="cal-slide-content" class="cal-event-list"><ul class="unstyled list-unstyled"><% _.each(events, function(event) { %><li><span class="pull-left event <%= event[\'class\'] %>"></span>&nbsp;<a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></li><% }) %></ul></div>'),
+			"modal": _.template('<% 	event.date_start = new Date(parseInt(event.start));event.date_end = new Date(parseInt(event.end)); %><div id = "event-meta" class  = "pull-right"><span>Starts on <%= event.date_start.getDate() %> <%= calendar.locale["m" + event.date_start.getMonth()] %> <%= event.date_start.getFullYear() %>, at <%= event.date_start.getHours() %>:<%= event.date_start.getMinutes() %> <i class = "icon-time"></i></span><br /><span>Ends on <%= event.date_end.getDate() %> <%= calendar.locale["m" + event.date_end.getMonth()] %> <%= event.date_end.getFullYear() %> at <%= event.date_end.getHours() %>:<%= event.date_end.getMinutes() %> <i class = "icon-time"></i></span><br /></div><div style = "margin: 10px 0"><a href = "<%= event.url %>" class = "btn btn-primary"><i class = "icon-calendar"></i> More info</a></div>'),
+			"month": _.template('<div class="cal-row-fluid cal-row-head"><% _.each(days_name, function(name){ %><div class="cal-cell1"><%= name %></div><% }) %></div><div class="cal-month-box"><% for(i = 0; i < 6; i++) { %><% if(cal.stop_cycling == true) break; %><div class="cal-row-fluid cal-before-eventlist"><div class="cal-cell1 cal-cell" data-cal-row="-day1"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day2"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day3"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day4"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day5"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day6"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day7"><%= cal._day(i, day++) %></div></div><% } %></div>'),
+			"month-day": _.template('<div class="cal-month-day <%= cls %>"><span class="pull-right" data-cal-date="<%= data_day %>" data-cal-view="day" data-toggle="tooltip" title="<%= tooltip %>"><%= day %></span><% if (events.length > 0) { %><div class="events-list" data-cal-start="<%= start %>" data-cal-end="<%= end %>"><% _.each(events, function(event) { %><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>" data-event-class="<%= event[\'class\'] %>"class="pull-left event <%= event[\'class\'] %>" data-toggle="tooltip"title="<%= event.title %>"></a><% }); %></div><% } %></div>'),
+			"week": _.template('<div class="cal-week-box"><div class="cal-offset1 cal-column"></div><div class="cal-offset2 cal-column"></div><div class="cal-offset3 cal-column"></div><div class="cal-offset4 cal-column"></div><div class="cal-offset5 cal-column"></div><div class="cal-offset6 cal-column"></div><div class="cal-row-fluid cal-row-head"><% _.each(days_name, function(name) { %><div class="cal-cell1 <%= cal._getDayClass(\'week\', start) %>" data-toggle="tooltip" title="<%= cal._getHolidayName(start) %>"><%= name %><br><small><span data-cal-date="<%= start.getFullYear() %>-<%= start.getMonthFormatted() %>-<%= start.getDateFormatted() %>" data-cal-view="day"><%= start.getDate() %> <%= cal.locale[\'ms\' + start.getMonth()] %></span></small></div><% start.setDate(start.getDate() + 1); %><% }) %></div><hr><%= cal._week() %></div>'),
+			"week-days": _.template('<% _.each(events, function(event){ %><div class="cal-row-fluid"><div class="cal-cell<%= event.days%> cal-offset<%= event.start_day %> day-highlight dh-<%= event[\'class\'] %>" data-event-class="<%= event[\'class\'] %>"><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>" class="cal-event-week event<%= event.id %>"><%= event.title %></a></div></div><% }); %>'),
+			"year": _.template('<div class="cal-year-box"><div class="row row-fluid cal-before-eventlist"><div class="span3 col-md-3 cal-cell" data-cal-row="-month1"><%= cal._month(0) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month2"><%= cal._month(1) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month3"><%= cal._month(2) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month4"><%= cal._month(3) %></div></div><div class="row row-fluid cal-before-eventlist"><div class="span3 col-md-3 cal-cell" data-cal-row="-month1"><%= cal._month(4) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month2"><%= cal._month(5) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month3"><%= cal._month(6) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month4"><%= cal._month(7) %></div></div><div class="row row-fluid cal-before-eventlist"><div class="span3 col-md-3 cal-cell" data-cal-row="-month1"><%= cal._month(8) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month2"><%= cal._month(9) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month3"><%= cal._month(10) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month4"><%= cal._month(11) %></div></div></div>'),
+			"year-month": _.template('<span class="pull-right" data-cal-date="<%= data_day %>" data-cal-view="month"><%= month_name %></span><% if (events.length > 0) { %><small class="cal-events-num badge badge-important pull-left"><%= events.length %></small><div class="hide events-list" data-cal-start="<%= start %>" data-cal-end="<%= end %>"><% _.each(events, function(event) { %><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>" data-event-class="<%= event[\'class\'] %>" class="pull-left event <%= event[\'class\'] %> event<%= event.id %>" data-toggle="tooltip" title="<%= event.title %>"></a><% }); %></div><% } %>')
 		},
 		// -------------------------------------------------------------
 		// INTERNAL USE ONLY. DO NOT ASSIGN IT WILL BE OVERRIDDEN ANYWAY
 		// -------------------------------------------------------------
 		events:             [],
-		templates:          {
-			year:  '',
-			month: '',
-			week:  '',
-			day:   ''
-		},
 		stop_cycling:       false
 	};
 
@@ -380,7 +374,6 @@ if(!String.prototype.formatNum) {
 
 	Calendar.prototype._render = function() {
 		this.context.html('');
-		this._loadTemplate(this.options.view);
 		this.stop_cycling = false;
 
 		var data = {};
@@ -522,8 +515,6 @@ if(!String.prototype.formatNum) {
 	};
 
 	Calendar.prototype._week = function(event) {
-		this._loadTemplate('week-days');
-
 		var t = {};
 		var start = parseInt(this.options.position.start.getTime());
 		var end = parseInt(this.options.position.end.getTime());
@@ -562,8 +553,6 @@ if(!String.prototype.formatNum) {
 	}
 
 	Calendar.prototype._month = function(month) {
-		this._loadTemplate('year-month');
-
 		var t = {cal: this};
 		var newmonth = month + 1;
 		t.data_day = this.options.position.start.getFullYear() + '-' + (newmonth < 10 ? '0' + newmonth : newmonth) + '-' + '01';
@@ -577,8 +566,6 @@ if(!String.prototype.formatNum) {
 	}
 
 	Calendar.prototype._day = function(week, day) {
-		this._loadTemplate('month-day');
-
 		var t = {tooltip: '', cal: this};
 		var cls = this.options.classes.months.outmonth;
 
@@ -902,31 +889,6 @@ if(!String.prototype.formatNum) {
 		}
 	};
 
-	Calendar.prototype._templatePath = function(name) {
-		if(typeof this.options.tmpl_path == 'function') {
-			return this.options.tmpl_path(name)
-		}
-		else {
-			return this.options.tmpl_path + name + '.html';
-		}
-	};
-
-	Calendar.prototype._loadTemplate = function(name) {
-		if(this.options.templates[name]) {
-			return;
-		}
-		var self = this;
-		$.ajax({
-			url:      self._templatePath(name),
-			dataType: 'html',
-			type:     'GET',
-			async:    false,
-			cache:    this.options.tmpl_cache
-		}).done(function(html) {
-			self.options.templates[name] = _.template(html);
-		});
-	};
-
 	Calendar.prototype._update = function() {
 		var self = this;
 
@@ -1008,7 +970,6 @@ if(!String.prototype.formatNum) {
 								break;
 
 							case "template":
-								self._loadTemplate("modal");
 								//	also serve calendar instance to underscore template to be able to access current language strings
 								modal_body.html(self.options.templates["modal"]({"event": event, "calendar": self}))
 								break;
@@ -1111,8 +1072,6 @@ if(!String.prototype.formatNum) {
 		slider.hide().click(function(event) {
 			event.stopPropagation();
 		});
-
-		this._loadTemplate('events-list');
 
 		downbox.click(function(event) {
 			showEventsList(event, $(this), slider, self);
