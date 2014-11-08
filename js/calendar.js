@@ -819,29 +819,22 @@ if(!String.prototype.formatNum) {
 
 	Calendar.prototype._loadEvents = function() {
 		var self = this;
-		var source = null;
-		if('events_source' in this.options && this.options.events_source !== '') {
-			source = this.options.events_source;
-		}
-		else if('events_url' in this.options) {
-			source = this.options.events_url;
-			warn('The events_url option is DEPRECATED and it will be REMOVED in near future. Please use events_source instead.');
-		}
+		var source = this.options.events_source;
 		var loader;
 		switch($.type(source)) {
 			case 'function':
-				loader = function() {
-					return source(self.options.position.start, self.options.position.end, browser_timezone);
+				loader = function(callback) {
+					source(self.options.position.start, self.options.position.end, browser_timezone, callback);
 				};
 				break;
 			case 'array':
-				loader = function() {
-					return [].concat(source);
+				loader = function(callback) {
+					return callback([].concat(source));
 				};
 				break;
 			case 'string':
 				if(source.length) {
-					loader = function() {
+					loader = function(callback) {
 						var events = [];
 						var params = {from: self.options.position.start.getTime(), to: self.options.position.end.getTime()};
 						if(browser_timezone.length) {
@@ -860,7 +853,7 @@ if(!String.prototype.formatNum) {
 								events = json.result;
 							}
 						});
-						return events;
+						callback(events);
 					};
 				}
 				break;
@@ -873,14 +866,16 @@ if(!String.prototype.formatNum) {
 		});
 		$(this.context).trigger(beforeEventsLoadEvent);
 		if (!beforeEventsLoadEvent.isDefaultPrevented()) {
-			self.options.events = loader();
-			self.options.events.sort(function(a, b) {
-				var delta;
-				delta = a.start - b.start;
-				if(delta == 0) {
-					delta = a.end - b.end;
-				}
-				return delta;
+			loader(function(events) {
+				self.options.events = events;
+				self.options.events.sort(function(a, b) {
+					var delta;
+					delta = a.start - b.start;
+					if(delta == 0) {
+						delta = a.end - b.end;
+					}
+					return delta;
+				});
 			});
 			$(this.context).trigger($.Event('events-loaded.bs-calendar', {
 				calendar: this,
