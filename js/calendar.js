@@ -7,6 +7,28 @@
  */
 "use strict";
 
+if (!Array.prototype.find) {
+  Array.prototype.find = function(predicate) {
+    if (this == null) {
+      throw new TypeError('Array.prototype.find called on null or undefined');
+    }
+    if (typeof predicate !== 'function') {
+      throw new TypeError('predicate must be a function');
+    }
+    var list = Object(this);
+    var length = list.length >>> 0;
+    var thisArg = arguments[1];
+    var value;
+
+    for (var i = 0; i < length; i++) {
+      value = list[i];
+      if (predicate.call(thisArg, value, i, list)) {
+        return value;
+      }
+    }
+    return undefined;
+  };
+}
 Date.prototype.getWeek = function() {
 	var onejan = new Date(this.getFullYear(), 0, 1);
 	return Math.ceil((((this.getTime() - onejan.getTime()) / 86400000) + onejan.getDay() + 1) / 7);
@@ -731,7 +753,7 @@ if(!String.prototype.formatNum) {
 		}
 		this.options.day = to.start.getFullYear() + '-' + to.start.getMonthFormatted() + '-' + to.start.getDateFormatted();
 		this.view();
-		if(_.isFunction(next)) {
+		if(typeof next === "function") {
 			next();
 		}
 	};
@@ -932,13 +954,13 @@ if(!String.prototype.formatNum) {
 		}
 
 
-		$('a[data-event-id]', this.context).on('click', function(event) {
+		$('a[data-event-id]', this.context).on('click', function(index, event) {
 			event.preventDefault();
 			event.stopPropagation();
 
 			var url = $(this).attr('href');
 			var id = $(this).data("event-id");
-			var event = _.find(self.options.events, function(event) {
+			var event = self.options.events.find(function(event) {
 				return event.id == id
 			});
 
@@ -972,7 +994,7 @@ if(!String.prototype.formatNum) {
 						}
 
 						//	set the title of the bootstrap modal
-						if(_.isFunction(self.options.modal_title)) {
+						if(typeof self.options.modal_title == "function") {
 							modal.find("h3").html(self.options.modal_title(event));
 						}
 					})
