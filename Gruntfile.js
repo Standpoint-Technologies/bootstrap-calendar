@@ -3,6 +3,16 @@ module.exports = function(grunt) {
 	// Project configuration.
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
+
+		connect: {
+			server: {
+				options: {
+					keepalive: true,
+					open: 'http://localhost:8000'
+				},
+			},
+		},
+
 		less: {
 			options: {
 				ieCompat: true,
@@ -29,6 +39,7 @@ module.exports = function(grunt) {
 				}
 			}
 		},
+
 		uglify: {
 			options: {
 				banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
@@ -43,10 +54,13 @@ module.exports = function(grunt) {
 	});
 
 	// Load the plugin that provides the tasks.
+	grunt.loadNpmTasks('grunt-contrib-connect');
 	grunt.loadNpmTasks('grunt-contrib-less');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 
 	// Default task(s).
 	grunt.registerTask('default', ['less:css', 'less:css_min', 'uglify']);
+
+	grunt.registerTask('server', 'connect');
 
 };

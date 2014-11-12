@@ -54,7 +54,7 @@ You will need to include the bootstrap css and calendar css. Here is the minimum
 				{
 					tmpl_path: "/tmpls/",
 					events_source: function () { return []; }
-				});			
+				});
 		</script>
 	</body>
 	</html>
@@ -78,13 +78,13 @@ Where xx-XX is the language code. When you initializing the calendar, you have t
 
 To feed the calendar with events you should use `events_source` parameter. It may be a function, array or URL. In all cases you have to set it with valid events array.
 
-See [events.json.php](https://github.com/Serhioromano/bootstrap-calendar/blob/master/events.json.php) file for more details.
+See [events.json](https://github.com/Serhioromano/bootstrap-calendar/blob/master/events.json) file for more details.
 
 `start` and `end` contain dates when event starts (inclusive) and ends (exclusive) in Unix timestamp. Classes are `event-important`, `event-success`, `event-warning`, `event-info`, `event-inverse` and `event-special`. This wil change the color of your event indicators.
 
 ### Feed URL
 
-	var calendar = $('#calendar').calendar({events_source: '/api/events.php'});
+	var calendar = $('#calendar').calendar({events_source: '/api/events'});
 
 It will send two parameters by `GET` named `from` and `to`, which will tell you what period is required. You have to return it in JSON structure like this
 
@@ -183,7 +183,7 @@ Another example of PHP script (without connecting with the Database).
 ```php
 <?php
 $out = array();
- 
+
  for($i=1; $i<=15; $i++){ 	//from day 01 to day 15
 	$data = date('Y-m-d', strtotime("+".$i." days"));
 	$out[] = array(
@@ -194,7 +194,7 @@ $out = array();
 		'start' => strtotime($data).'000'
 	);
 }
- 
+
 echo json_encode(array('success' => 1, 'result' => $out));
 exit;
 ?>
@@ -202,15 +202,15 @@ exit;
 
 ## Usage warning.
 
-You cannot use the calendar from a local file. 
+You cannot use the calendar from a local file.
 The following error will be displayed :
-Failed to load resource: Origin null is not allowed by Access-Control-Allow-Origin. 
+Failed to load resource: Origin null is not allowed by Access-Control-Allow-Origin.
 
 Using Ajax with local resources (file:///), is not permited. You will need to deploy this to the web instead.
 
 ## Modal popup
 
-You can enable a bootstrap modal popup to show when clicking an event instead of redirecting to event.url. 
+You can enable a bootstrap modal popup to show when clicking an event instead of redirecting to event.url.
 To enable boostrap modal, first add the modal html to your page and provide boostrap-calendar with the ID:
 
     <div class="modal hide fade" id="events-modal">
@@ -265,4 +265,3 @@ The modal title can be customized by defining the `modal_title` option as a func
 A calendar set up to use modals would look like this:
 
 	$("#calendar").calendar({modal : "#events-modal", modal_type : "ajax", modal_title : function (e) { return e.title }})
-
