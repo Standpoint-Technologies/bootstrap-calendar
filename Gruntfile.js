@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 		connect: {
 			server: {
 				options: {
-					keepalive: true,
+					livereload: true,
 					open: 'http://localhost:8000'
 				},
 			},
@@ -50,6 +50,20 @@ module.exports = function(grunt) {
 				src: 'js/calendar.js',
 				dest: 'js/calendar.min.js'
 			}
+		},
+
+		watch: {
+			configFiles: {
+				files: 'Gruntfile.js',
+				options: {
+					reload: true
+				}
+			},
+
+			css: {
+				files: 'less/*.less',
+				tasks: ['less:css', 'less:css_min']
+			}
 		}
 	});
 
@@ -57,10 +71,11 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-connect');
 	grunt.loadNpmTasks('grunt-contrib-less');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	// Default task(s).
 	grunt.registerTask('default', ['less:css', 'less:css_min', 'uglify']);
 
-	grunt.registerTask('server', 'connect');
+	grunt.registerTask('server', ['connect:server', 'watch']);
 
 };
