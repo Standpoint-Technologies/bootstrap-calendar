@@ -29,6 +29,37 @@ if (!Array.prototype.find) {
     return undefined;
   };
 }
+// Production steps of ECMA-262, Edition 5, 15.4.4.21
+// Reference: http://es5.github.io/#x15.4.4.21
+if (!Array.prototype.reduce) {
+  Array.prototype.reduce = function(callback /*, initialValue*/) {
+    'use strict';
+    if (this == null) {
+      throw new TypeError('Array.prototype.reduce called on null or undefined');
+    }
+    if (typeof callback !== 'function') {
+      throw new TypeError(callback + ' is not a function');
+    }
+    var t = Object(this), len = t.length >>> 0, k = 0, value;
+    if (arguments.length == 2) {
+      value = arguments[1];
+    } else {
+      while (k < len && ! k in t) {
+        k++;
+      }
+      if (k >= len) {
+        throw new TypeError('Reduce of empty array with no initial value');
+      }
+      value = t[k++];
+    }
+    for (; k < len; k++) {
+      if (k in t) {
+        value = callback(value, t[k], k, t);
+      }
+    }
+    return value;
+  };
+}
 Date.prototype.getWeek = function() {
 	var onejan = new Date(this.getFullYear(), 0, 1);
 	return Math.ceil((((this.getTime() - onejan.getTime()) / 86400000) + onejan.getDay() + 1) / 7);
@@ -61,16 +92,17 @@ if(!String.prototype.formatNum) {
 (function($) {
 
 	var defaults = {
+    group: true,
 		// Width of the calendar
-		width:              '100%',
+		width: '100%',
 		// Initial view (can be 'month', 'week', 'day')
-		view:               'month',
+		view: 'month',
 		// Initial date. No matter month, week or day this will be a starting point. Can be 'now' or a date in format 'yyyy-mm-dd'
-		day:                'now',
+		day: 'now',
 		// Day Start time and end time with time intervals. Time split 10, 15 or 30.
-		time_start:         '06:00',
-		time_end:           '22:00',
-		time_split:         '30',
+		time_start: '06:00',
+		time_end: '22:00',
+		time_split: '30',
 		// Source of events data. It can be one of the following:
 		// - URL to return JSON list of events in special format.
 		//   {success:1, result: [....]} or for error {success:0, error:'Something terrible happened'}
@@ -79,47 +111,48 @@ if(!String.prototype.formatNum) {
 		// - A function that received the start and end date, and that
 		//   returns an array of events (as described in events property description)
 		// - An array containing the events
-		events_source:      '',
-		classes:            {
+		events_source: '',
+		classes: {
 			months: {
-				inmonth:  'cal-day-inmonth',
+				inmonth: 'cal-day-inmonth',
 				outmonth: 'cal-day-outmonth',
 				saturday: 'cal-day-weekend',
-				sunday:   'cal-day-weekend',
+				sunday: 'cal-day-weekend',
 				holidays: 'cal-day-holiday',
-				today:    'cal-day-today'
+				today: 'cal-day-today'
 			},
-			week:   {
-				workday:  'cal-day-workday',
+			week: {
+				workday: 'cal-day-workday',
 				saturday: 'cal-day-weekend',
-				sunday:   'cal-day-weekend',
+				sunday: 'cal-day-weekend',
 				holidays: 'cal-day-holiday',
-				today:    'cal-day-today'
+				today: 'cal-day-today'
 			}
 		},
 		// ID of the element of modal window. If set, events URLs will be opened in modal windows.
-		modal:              null,
+		modal: null,
 		//	modal handling setting, one of "iframe", "ajax" or "template"
-		modal_type:         "iframe",
+		modal_type: "iframe",
 		//	function to set modal title, will be passed the event as a parameter
-		modal_title:        null,
-		views:              {
-			year:  {
-				slide_events: 1,
-				enable:       1
+		modal_title: null,
+		views: {
+			year: {
+				slide_events: true,
+				enable: true
 			},
 			month: {
-				slide_events: 1,
-				enable:       1
+				slide_events: true,
+				enable: true
 			},
-			week:  {
-				enable: 1
+			week: {
+				enable: true,
+        group: false
 			},
-			day:   {
-				enable: 1
+			day: {
+				enable: true
 			}
 		},
-		merge_holidays:     false,
+		merge_holidays: false,
 		templates: {
 			"day": _.template('<div id="cal-day-box"><div class="row-fluid clearfix cal-row-head"><div class="span1 col-xs-1 cal-cell"><%= cal.locale.time %></div><div class="span11 col-xs-11 cal-cell"><%= cal.locale.events %></div></div><% if(all_day.length) {%><div class="row-fluid clearfix cal-day-hour"><div class="span1 col-xs-1"><b><%= cal.locale.all_day %></b></div><div class="span11 col-xs-11"><% _.each(all_day, function(event){ %><div class="day-highlight dh-<%= event[\'class\'] %>"><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div></div><% }; %><% if(before_time.length) {%><div class="row-fluid clearfix cal-day-hour"><div class="span1 col-xs-3"><b><%= cal.locale.before_time %></b></div><div class="span5 col-xs-5"><% _.each(before_time, function(event){ %><div class="day-highlight dh-<%= event[\'class\'] %>"><span class="cal-hours pull-right"><%= event.end_hour %></span><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div></div><% }; %><div id="cal-day-panel" class="clearfix"><div id="cal-day-panel-hour"><% for(i = 0; i < hours; i++){ %><div class="cal-day-hour"><% for(l = 0; l < cal._hour_min(i); l++){ %><div class="row-fluid cal-day-hour-part"><div class="span1 col-xs-1"><b><%= cal._hour(i, l) %></b></div><div class="span11 col-xs-11"></div></div><% }; %></div><% }; %></div><% _.each(by_hour, function(event){ %><div class="pull-left day-event day-highlight dh-<%= event[\'class\'] %>" style="margin-top: <%= (event.top * 30) %>px; height: <%= (event.lines * 30) %>px"><span class="cal-hours"><%= event.start_hour %> - <%= event.end_hour %></span><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div><% if(after_time.length) {%><div class="row-fluid clearfix cal-day-hour"><div class="span1 col-xs-3"><b><%= cal.locale.after_time %></b></div><div class="span11 col-xs-9"><% _.each(after_time, function(event){ %><div class="day-highlight dh-<%= event[\'class\'] %>"><span class="cal-hours"><%= event.start_hour %></span><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div></div><% }; %></div>'),
 			"events-list": _.template('<span id="cal-slide-tick" style="display: none"></span><div id="cal-slide-content" class="cal-event-list"><ul class="unstyled list-unstyled"><% _.each(events, function(event) { %><li><span class="pull-left event <%= event[\'class\'] %>"></span>&nbsp;<a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></li><% }) %></ul></div>'),
@@ -127,15 +160,15 @@ if(!String.prototype.formatNum) {
 			"month": _.template('<div class="cal-row-fluid cal-row-head"><% _.each(days_name, function(name){ %><div class="cal-cell1"><%= name %></div><% }) %></div><div class="cal-month-box"><% for(i = 0; i < 6; i++) { %><% if(cal.stop_cycling == true) break; %><div class="cal-row-fluid cal-before-eventlist"><div class="cal-cell1 cal-cell" data-cal-row="-day1"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day2"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day3"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day4"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day5"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day6"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day7"><%= cal._day(i, day++) %></div></div><% } %></div>'),
 			"month-day": _.template('<div class="cal-month-day <%= cls %>"><span class="pull-right" data-cal-date="<%= data_day %>" data-cal-view="day" data-toggle="tooltip" title="<%= tooltip %>"><%= day %></span><% if (events.length > 0) { %><div class="events-list" data-cal-start="<%= start %>" data-cal-end="<%= end %>"><% _.each(events, function(event) { %><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>" data-event-class="<%= event[\'class\'] %>"class="pull-left event <%= event[\'class\'] %>" data-toggle="tooltip"title="<%= event.title %>"></a><% }); %></div><% } %></div>'),
 			"week": _.template('<div class="cal-week-box"><div class="cal-offset1 cal-column"></div><div class="cal-offset2 cal-column"></div><div class="cal-offset3 cal-column"></div><div class="cal-offset4 cal-column"></div><div class="cal-offset5 cal-column"></div><div class="cal-offset6 cal-column"></div><div class="cal-row-fluid cal-row-head"><% _.each(days_name, function(name) { %><div class="cal-cell1 <%= cal._getDayClass(\'week\', start) %>" data-toggle="tooltip" title="<%= cal._getHolidayName(start) %>"><%= name %><br><small><span data-cal-date="<%= start.getFullYear() %>-<%= start.getMonthFormatted() %>-<%= start.getDateFormatted() %>" data-cal-view="day"><%= start.getDate() %> <%= cal.locale[\'ms\' + start.getMonth()] %></span></small></div><% start.setDate(start.getDate() + 1); %><% }) %></div><hr><%= cal._week() %></div>'),
-			"week-days": _.template('<% _.each(events, function(event){ %><div class="cal-row-fluid"><div class="cal-cell<%= event.days%> cal-offset<%= event.start_day %> day-highlight dh-<%= event[\'class\'] %>" data-event-class="<%= event[\'class\'] %>"><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>" class="cal-event-week event<%= event.id %>"><%= event.title %></a></div></div><% }); %>'),
+			"week-days": _.template('<% for (var group in events) { %><div class="group event-info"><%= group%></div><% _.each(events[group], function(event){ %><div class="cal-row-fluid"><div class="cal-cell<%= event.days%> cal-offset<%= event.start_day %> day-highlight dh-<%= event[\'class\'] %>" data-event-class="<%= event[\'class\'] %>"><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>" class="cal-event-week event<%= event.id %>"><%= event.title %></a></div></div><% }); %><% } %>'),
 			"year": _.template('<div class="cal-year-box"><div class="row row-fluid cal-before-eventlist"><div class="span3 col-md-3 cal-cell" data-cal-row="-month1"><%= cal._month(0) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month2"><%= cal._month(1) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month3"><%= cal._month(2) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month4"><%= cal._month(3) %></div></div><div class="row row-fluid cal-before-eventlist"><div class="span3 col-md-3 cal-cell" data-cal-row="-month1"><%= cal._month(4) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month2"><%= cal._month(5) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month3"><%= cal._month(6) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month4"><%= cal._month(7) %></div></div><div class="row row-fluid cal-before-eventlist"><div class="span3 col-md-3 cal-cell" data-cal-row="-month1"><%= cal._month(8) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month2"><%= cal._month(9) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month3"><%= cal._month(10) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month4"><%= cal._month(11) %></div></div></div>'),
 			"year-month": _.template('<span class="pull-right" data-cal-date="<%= data_day %>" data-cal-view="month"><%= month_name %></span><% if (events.length > 0) { %><small class="cal-events-num badge badge-important pull-left"><%= events.length %></small><div class="hide events-list" data-cal-start="<%= start %>" data-cal-end="<%= end %>"><% _.each(events, function(event) { %><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>" data-event-class="<%= event[\'class\'] %>" class="pull-left event <%= event[\'class\'] %> event<%= event.id %>" data-toggle="tooltip" title="<%= event.title %>"></a><% }); %></div><% } %>')
 		},
 		// -------------------------------------------------------------
 		// INTERNAL USE ONLY. DO NOT ASSIGN IT WILL BE OVERRIDDEN ANYWAY
 		// -------------------------------------------------------------
-		events:             [],
-		stop_cycling:       false
+		events: [],
+		stop_cycling: false
 	};
 
 	var defaults_extended = {
@@ -165,50 +198,50 @@ if(!String.prototype.formatNum) {
 	};
 
 	var strings = {
-		error_noview:     'Calendar: View {0} not found',
+		error_noview: 'Calendar: View {0} not found',
 		error_dateformat: 'Calendar: Wrong date format {0}. Should be either "now" or "yyyy-mm-dd"',
-		error_loadurl:    'Calendar: Event URL is not set',
-		error_where:      'Calendar: Wrong navigation direction {0}. Can be only "next" or "prev" or "today"',
+		error_loadurl: 'Calendar: Event URL is not set',
+		error_where: 'Calendar: Wrong navigation direction {0}. Can be only "next" or "prev" or "today"',
 		error_timedevide: 'Calendar: Time split parameter should divide 60 without decimals. Something like 10, 15, 30',
 
 		no_events_in_day: 'No events in this day.',
 
-		title_year:  '{0}',
+		title_year: '{0}',
 		title_month: '{0} {1}',
-		title_week:  'week {0} of {1}',
-		title_day:   '{0} {1} {2}, {3}',
+		title_week: 'week {0} of {1}',
+		title_day: '{0} {1} {2}, {3}',
 
-		week:        'Week {0}',
-		all_day:     'All day',
-		time:        'Time',
-		events:      'Events',
+		week: 'Week {0}',
+		all_day: 'All day',
+		time: 'Time',
+		events: 'Events',
 		before_time: 'Ends before timeline',
-		after_time:  'Starts after timeline',
+		after_time: 'Starts after timeline',
 
 
-		m0:  'January',
-		m1:  'February',
-		m2:  'March',
-		m3:  'April',
-		m4:  'May',
-		m5:  'June',
-		m6:  'July',
-		m7:  'August',
-		m8:  'September',
-		m9:  'October',
+		m0: 'January',
+		m1: 'February',
+		m2: 'March',
+		m3: 'April',
+		m4: 'May',
+		m5: 'June',
+		m6: 'July',
+		m7: 'August',
+		m8: 'September',
+		m9: 'October',
 		m10: 'November',
 		m11: 'December',
 
-		ms0:  'Jan',
-		ms1:  'Feb',
-		ms2:  'Mar',
-		ms3:  'Apr',
-		ms4:  'May',
-		ms5:  'Jun',
-		ms6:  'Jul',
-		ms7:  'Aug',
-		ms8:  'Sep',
-		ms9:  'Oct',
+		ms0: 'Jan',
+		ms1: 'Feb',
+		ms2: 'Mar',
+		ms3: 'Apr',
+		ms4: 'May',
+		ms5: 'Jun',
+		ms6: 'Jul',
+		ms7: 'Aug',
+		ms8: 'Sep',
+		ms9: 'Oct',
 		ms10: 'Nov',
 		ms11: 'Dec',
 
@@ -570,7 +603,7 @@ if(!String.prototype.formatNum) {
 
 			events.push(event);
 		});
-		t.events = events;
+		t.events = self.options.views.week.group ? this._groupEvents(events) : { "": events };
 		t.cal = this;
 		return self.options.templates['week-days'](t);
 	}
@@ -693,6 +726,17 @@ if(!String.prototype.formatNum) {
 
 		return classes.join(" ");
 	};
+
+  Calendar.prototype._groupEvents = function(events) {
+    return events.reduce(function(previousValue, currentValue, index, array) {
+      var group = currentValue.group || "";
+      if (!previousValue[group]) {
+        previousValue[group] = [];
+      }
+      previousValue[group].push(currentValue);
+      return previousValue;
+    }, {});
+  };
 
 	Calendar.prototype.view = function(view) {
 		if(view) {

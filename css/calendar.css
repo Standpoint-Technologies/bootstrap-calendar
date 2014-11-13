@@ -246,6 +246,15 @@
   border-left: 8px solid #FFFFFF;
   border-bottom: 15px solid transparent;
 }
+.cal-week-box .group {
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  padding: 5px 10px;
+  margin-top: 15px;
+}
+.cal-week-box .group:empty {
+  display: none;
+}
 #cal-day-box {
   text-wrap: none;
 }
@@ -375,6 +384,24 @@
 }
 .day-highlight.dh-event-special:hover,
 .day-highlight.dh-event-special {
+  background-color: #ffe6ff;
+}
+.group.event-important {
+  background-color: #fae3e3;
+}
+.group.event-info {
+  background-color: #d1e8ff;
+}
+.group.event-warning {
+  background-color: #fdf1ba;
+}
+.group.event-inverse {
+  background-color: #c1c1c1;
+}
+.group.event-success {
+  background-color: #caffca;
+}
+.group.event-special {
   background-color: #ffe6ff;
 }
 .cal-row-head [class*="cal-cell"]:first-child,
