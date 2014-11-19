@@ -426,7 +426,7 @@ if(!String.prototype.formatNum) {
   }
 
   Calendar.prototype._render = function() {
-    this.context.html('');
+    this.context.empty();
     this.stop_cycling = false;
 
     var data = {};
@@ -939,9 +939,16 @@ if(!String.prototype.formatNum) {
         self.options.events = events;
         self.options.events.sort(function(a, b) {
           var delta;
-          delta = a.start - b.start;
-          if(delta == 0) {
-            delta = a.end - b.end;
+          if (isNaN(a.start)) {
+            delta = moment(a.start) - moment(b.start);
+            if(delta == 0) {
+              delta = moment(a.end) - moment(b.end);
+            }
+          } else {
+            delta = a.start - b.start;
+            if(delta == 0) {
+              delta = a.end - b.end;
+            }
           }
           return delta;
         });
@@ -1148,8 +1155,9 @@ if(!String.prototype.formatNum) {
       if(this.start == null) {
         return true;
       }
-      var event_end = this.end || this.start;
-      if((parseInt(this.start) < end) && (parseInt(event_end) >= start)) {
+      var event_start = isNaN(this.start) ? moment(this.start).toDate().getTime() : parseInt(this.start);
+      var event_end = this.end ? (isNaN(this.end) ? moment(this.end).toDate().getTime() : parseInt(this.end)) : event_start;
+      if ((event_start < end) && (event_end >= start)) {
         events.push(this);
       }
     });
