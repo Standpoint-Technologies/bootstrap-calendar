@@ -3,7 +3,7 @@
 	"use strict";
 
 	var options = {
-		events_source: 'events.json',
+		events_source: 'events.json?from=%FROM%&to=%TO%&browserTimezone=%BROWSER_TIMEZONE%',
 		view: 'month',
 		tmpl_path: 'tmpls/',
 		tmpl_cache: false,
@@ -11,6 +11,14 @@
 		classes: {
 			months: {
 				general: 'label'
+			}
+		},
+		views: {
+			week: {
+				group: true
+			},
+			day: {
+				group: true
 			}
 		}
 	};

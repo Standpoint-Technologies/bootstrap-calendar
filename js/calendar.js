@@ -92,7 +92,6 @@ if(!String.prototype.formatNum) {
 (function($) {
 
 	var defaults = {
-    group: true,
 		// Width of the calendar
 		width: '100%',
 		// Initial view (can be 'month', 'week', 'day')
@@ -149,12 +148,13 @@ if(!String.prototype.formatNum) {
         group: false
 			},
 			day: {
-				enable: true
+				enable: true,
+        group: false
 			}
 		},
 		merge_holidays: false,
 		templates: {
-			"day": _.template('<div id="cal-day-box"><div class="row-fluid clearfix cal-row-head"><div class="span1 col-xs-1 cal-cell"><%= cal.locale.time %></div><div class="span11 col-xs-11 cal-cell"><%= cal.locale.events %></div></div><% if(all_day.length) {%><div class="row-fluid clearfix cal-day-hour"><div class="span1 col-xs-1"><b><%= cal.locale.all_day %></b></div><div class="span11 col-xs-11"><% _.each(all_day, function(event){ %><div class="day-highlight dh-<%= event[\'class\'] %>"><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div></div><% }; %><% if(before_time.length) {%><div class="row-fluid clearfix cal-day-hour"><div class="span1 col-xs-3"><b><%= cal.locale.before_time %></b></div><div class="span5 col-xs-5"><% _.each(before_time, function(event){ %><div class="day-highlight dh-<%= event[\'class\'] %>"><span class="cal-hours pull-right"><%= event.end_hour %></span><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div></div><% }; %><div id="cal-day-panel" class="clearfix"><div id="cal-day-panel-hour"><% for(i = 0; i < hours; i++){ %><div class="cal-day-hour"><% for(l = 0; l < cal._hour_min(i); l++){ %><div class="row-fluid cal-day-hour-part"><div class="span1 col-xs-1"><b><%= cal._hour(i, l) %></b></div><div class="span11 col-xs-11"></div></div><% }; %></div><% }; %></div><% _.each(by_hour, function(event){ %><div class="pull-left day-event day-highlight dh-<%= event[\'class\'] %>" style="margin-top: <%= (event.top * 30) %>px; height: <%= (event.lines * 30) %>px"><span class="cal-hours"><%= event.start_hour %> - <%= event.end_hour %></span><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div><% if(after_time.length) {%><div class="row-fluid clearfix cal-day-hour"><div class="span1 col-xs-3"><b><%= cal.locale.after_time %></b></div><div class="span11 col-xs-9"><% _.each(after_time, function(event){ %><div class="day-highlight dh-<%= event[\'class\'] %>"><span class="cal-hours"><%= event.start_hour %></span><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div></div><% }; %></div>'),
+      "day": _.template('<div id="cal-day-box"><div class="row-fluid clearfix cal-row-head"><div class="span1 col-xs-1 cal-cell"><%= cal.locale.time %></div><div class="span11 col-xs-11 cal-cell"><%= cal.locale.events %></div></div><% if(all_day.length) {%><div class="row-fluid clearfix cal-day-hour"><div class="span1 col-xs-1"><b><%= cal.locale.all_day %></b></div><div class="span11 col-xs-11"><% _.each(all_day, function(event){ %><div class="day-highlight dh-<%= event[\'class\'] %>"><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div></div><% }; %><% if(before_time.length) {%><div class="row-fluid clearfix cal-day-hour"><div class="span1 col-xs-3"><b><%= cal.locale.before_time %></b></div><div class="span5 col-xs-5"><% _.each(before_time, function(event){ %><div class="day-highlight dh-<%= event[\'class\'] %>"><span class="cal-hours pull-right"><%= event.end_hour %></span><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div></div><% }; %><div id="cal-day-panel" class="clearfix"><div id="cal-day-panel-hour"><% for(i = 0; i < hours; i++){ %><div class="cal-day-hour"><% for(l = 0; l < cal._hour_min(i); l++){ %><div class="row-fluid cal-day-hour-part"><div class="span1 col-xs-1"><b><%= cal._hour(i, l) %></b></div><div class="span11 col-xs-11"></div></div><% }; %></div><% }; %></div><% _.each(by_hour, function(event){ %><div class="pull-left day-event day-highlight dh-<%= event[\'class\'] %>" style="margin-top: <%= (event.top * 30) %>px; height: <%= (event.lines * 30) %>px"><span class="cal-hours"><%= event.start_hour %> - <%= event.end_hour %></span><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div><% if(after_time.length) {%><div class="row-fluid clearfix cal-day-hour"><div class="span1 col-xs-3"><b><%= cal.locale.after_time %></b></div><div class="span11 col-xs-9"><% _.each(after_time, function(event){ %><div class="day-highlight dh-<%= event[\'class\'] %>"><span class="cal-hours"><%= event.start_hour %></span><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div></div><% }; %></div>'),
 			"events-list": _.template('<span id="cal-slide-tick" style="display: none"></span><div id="cal-slide-content" class="cal-event-list"><ul class="unstyled list-unstyled"><% _.each(events, function(event) { %><li><span class="pull-left event <%= event[\'class\'] %>"></span>&nbsp;<a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></li><% }) %></ul></div>'),
 			"modal": _.template('<% 	event.date_start = new Date(parseInt(event.start));event.date_end = new Date(parseInt(event.end)); %><div id = "event-meta" class  = "pull-right"><span>Starts on <%= event.date_start.getDate() %> <%= calendar.locale["m" + event.date_start.getMonth()] %> <%= event.date_start.getFullYear() %>, at <%= event.date_start.getHours() %>:<%= event.date_start.getMinutes() %> <i class = "icon-time"></i></span><br /><span>Ends on <%= event.date_end.getDate() %> <%= calendar.locale["m" + event.date_end.getMonth()] %> <%= event.date_end.getFullYear() %> at <%= event.date_end.getHours() %>:<%= event.date_end.getMinutes() %> <i class = "icon-time"></i></span><br /></div><div style = "margin: 10px 0"><a href = "<%= event.url %>" class = "btn btn-primary"><i class = "icon-calendar"></i> More info</a></div>'),
 			"month": _.template('<div class="cal-row-fluid cal-row-head"><% _.each(days_name, function(name){ %><div class="cal-cell1"><%= name %></div><% }) %></div><div class="cal-month-box"><% for(i = 0; i < 6; i++) { %><% if(cal.stop_cycling == true) break; %><div class="cal-row-fluid cal-before-eventlist"><div class="cal-cell1 cal-cell" data-cal-row="-day1"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day2"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day3"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day4"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day5"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day6"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day7"><%= cal._day(i, day++) %></div></div><% } %></div>'),
@@ -267,14 +267,11 @@ if(!String.prototype.formatNum) {
 	}
 
 	function buildEventsUrl(events_url, data) {
-		var separator, key, url;
-		url = events_url;
-		separator = (events_url.indexOf('?') < 0) ? '?' : '&';
-		for(key in data) {
-			url += separator + key + '=' + encodeURIComponent(data[key]);
-			separator = '&';
-		}
-		return url;
+    var url = events_url;
+    url = url.replace('%FROM%', data.from);
+    url = url.replace('%TO%', data.to);
+    url = url.replace('%BROWSER_TIMEZONE%', data.browser_timezone);
+    return url;
 	}
 
 	function getExtentedOption(cal, option_name) {
@@ -457,6 +454,9 @@ if(!String.prototype.formatNum) {
 				break;
 			case 'day':
 				this._calculate_hour_minutes(data);
+        // if (this.options.views.day.group) {
+        //   data.events = this._groupEvents(data.events);
+        // }
 				break;
 		}
 
@@ -903,7 +903,10 @@ if(!String.prototype.formatNum) {
 				if(source.length) {
 					loader = function(callback) {
 						var events = [];
-						var params = {from: self.options.position.start.getTime(), to: self.options.position.end.getTime()};
+            var params = {
+              from: moment(self.options.position.start).format("MM/DD/YYYY"),
+              to: moment(self.options.position.end).format("MM/DD/YYYY")
+            };
 						if(browser_timezone.length) {
 							params.browser_timezone = browser_timezone;
 						}
@@ -912,14 +915,11 @@ if(!String.prototype.formatNum) {
 							dataType: 'json',
 							type:     'GET',
 							async:    false
-						}).done(function(json) {
-							if(!json.success) {
-								$.error(json.error);
-							}
-							if(json.result) {
-								events = json.result;
-							}
-						});
+						}).done(function(data, status, jqXHR) {
+              events = data;
+            }).fail(function(jqXHR, status, errorThrown) {
+              $.error(errorThrown);
+            });
 						callback(events);
 					};
 				}
