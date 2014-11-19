@@ -156,10 +156,10 @@ if(!String.prototype.formatNum) {
     templates: {
       "day": _.template('<div id="cal-day-box"><div class="row-fluid clearfix cal-row-head"><div class="span1 col-xs-1 cal-cell"><%= cal.locale.time %></div><div class="span11 col-xs-11 cal-cell"><%= cal.locale.events %></div></div><% if(all_day.length) {%><div class="row-fluid clearfix cal-day-hour"><div class="span1 col-xs-1"><b><%= cal.locale.all_day %></b></div><div class="span11 col-xs-11"><% _.each(all_day, function(event){ %><div class="day-highlight dh-<%= event[\'class\'] %>"><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div></div><% }; %><% if(before_time.length) {%><div class="row-fluid clearfix cal-day-hour"><div class="span1 col-xs-3"><b><%= cal.locale.before_time %></b></div><div class="span5 col-xs-5"><% _.each(before_time, function(event){ %><div class="day-highlight dh-<%= event[\'class\'] %>"><span class="cal-hours pull-right"><%= event.end_hour %></span><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div></div><% }; %><div id="cal-day-panel" class="clearfix"><div id="cal-day-panel-hour"><% for(i = 0; i < hours; i++){ %><div class="cal-day-hour"><% for(l = 0; l < cal._hour_min(i); l++){ %><div class="row-fluid cal-day-hour-part"><div class="span1 col-xs-1"><b><%= cal._hour(i, l) %></b></div><div class="span11 col-xs-11"></div></div><% }; %></div><% }; %></div><% _.each(by_hour, function(event){ %><div class="pull-left day-event day-highlight dh-<%= event[\'class\'] %>" style="margin-top: <%= (event.top * 30) %>px; height: <%= (event.lines * 30) %>px"><span class="cal-hours"><%= event.start_hour %> - <%= event.end_hour %></span><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div><% if(after_time.length) {%><div class="row-fluid clearfix cal-day-hour"><div class="span1 col-xs-3"><b><%= cal.locale.after_time %></b></div><div class="span11 col-xs-9"><% _.each(after_time, function(event){ %><div class="day-highlight dh-<%= event[\'class\'] %>"><span class="cal-hours"><%= event.start_hour %></span><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></div><% }); %></div></div><% }; %></div>'),
       "events-list": _.template('<span id="cal-slide-tick" style="display: none"></span><div id="cal-slide-content" class="cal-event-list"><ul class="unstyled list-unstyled"><% _.each(events, function(event) { %><li><span class="pull-left event <%= event[\'class\'] %>"></span>&nbsp;<a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>"data-event-class="<%= event[\'class\'] %>" class="event-item"><%= event.title %></a></li><% }) %></ul></div>'),
-      "modal": _.template('<% 	event.date_start = new Date(parseInt(event.start));event.date_end = new Date(parseInt(event.end)); %><div id = "event-meta" class  = "pull-right"><span>Starts on <%= event.date_start.getDate() %> <%= calendar.locale["m" + event.date_start.getMonth()] %> <%= event.date_start.getFullYear() %>, at <%= event.date_start.getHours() %>:<%= event.date_start.getMinutes() %> <i class = "icon-time"></i></span><br /><span>Ends on <%= event.date_end.getDate() %> <%= calendar.locale["m" + event.date_end.getMonth()] %> <%= event.date_end.getFullYear() %> at <%= event.date_end.getHours() %>:<%= event.date_end.getMinutes() %> <i class = "icon-time"></i></span><br /></div><div style = "margin: 10px 0"><a href = "<%= event.url %>" class = "btn btn-primary"><i class = "icon-calendar"></i> More info</a></div>'),
+      "modal": _.template('<% 	event.date_start = new Date(parseInt(event.start));event.date_end = new Date(parseInt(event.end)); %><div id = "event-meta" class  = "pull-right"><span>Starts on <%= event.date_start.date() %> <%= calendar.locale["m" + event.date_start.month()] %> <%= event.date_start.year() %>, at <%= event.date_start.format(\'hh:mm\') %> <i class = "icon-time"></i></span><br /><span>Ends on <%= event.date_end.date() %> <%= calendar.locale["m" + event.date_end.month()] %> <%= event.date_end.year() %> at <%= event.date_end.format(\'hh:mm\') %> <i class = "icon-time"></i></span><br /></div><div style = "margin: 10px 0"><a href = "<%= event.url %>" class = "btn btn-primary"><i class = "icon-calendar"></i> More info</a></div>'),
       "month": _.template('<div class="cal-row-fluid cal-row-head"><% _.each(days_name, function(name){ %><div class="cal-cell1"><%= name %></div><% }) %></div><div class="cal-month-box"><% for(i = 0; i < 6; i++) { %><% if(cal.stop_cycling == true) break; %><div class="cal-row-fluid cal-before-eventlist"><div class="cal-cell1 cal-cell" data-cal-row="-day1"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day2"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day3"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day4"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day5"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day6"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day7"><%= cal._day(i, day++) %></div></div><% } %></div>'),
       "month-day": _.template('<div class="cal-month-day <%= cls %>"><span class="pull-right" data-cal-date="<%= data_day %>" data-cal-view="day" data-toggle="tooltip" title="<%= tooltip %>"><%= day %></span><% if (events.length > 0) { %><div class="events-list" data-cal-start="<%= start %>" data-cal-end="<%= end %>"><% _.each(events, function(event) { %><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>" data-event-class="<%= event[\'class\'] %>"class="pull-left event <%= event[\'class\'] %>" data-toggle="tooltip"title="<%= event.title %>"></a><% }); %></div><% } %></div>'),
-      "week": _.template('<div class="cal-week-box"><div class="cal-offset1 cal-column"></div><div class="cal-offset2 cal-column"></div><div class="cal-offset3 cal-column"></div><div class="cal-offset4 cal-column"></div><div class="cal-offset5 cal-column"></div><div class="cal-offset6 cal-column"></div><div class="cal-row-fluid cal-row-head"><% _.each(days_name, function(name) { %><div class="cal-cell1 <%= cal._getDayClass(\'week\', start) %>" data-toggle="tooltip" title="<%= cal._getHolidayName(start) %>"><%= name %><br><small><span data-cal-date="<%= start.getFullYear() %>-<%= start.getMonthFormatted() %>-<%= start.getDateFormatted() %>" data-cal-view="day"><%= start.getDate() %> <%= cal.locale[\'ms\' + start.getMonth()] %></span></small></div><% start.setDate(start.getDate() + 1); %><% }) %></div><hr><%= cal._week() %></div>'),
+      "week": _.template('<div class="cal-week-box"><div class="cal-offset1 cal-column"></div><div class="cal-offset2 cal-column"></div><div class="cal-offset3 cal-column"></div><div class="cal-offset4 cal-column"></div><div class="cal-offset5 cal-column"></div><div class="cal-offset6 cal-column"></div><div class="cal-row-fluid cal-row-head"><% _.each(days_name, function(name) { %><div class="cal-cell1 <%= cal._getDayClass(\'week\', start) %>" data-toggle="tooltip" title="<%= cal._getHolidayName(start) %>"><%= name %><br><small><span data-cal-date="<%= start.format(\'YYYY-MM-DD\') %>" data-cal-view="day"><%= start.date() %> <%= cal.locale[\'ms\' + start.month()] %></span></small></div><% start.date(start.date() + 1); %><% }) %></div><hr><%= cal._week() %></div>'),
       "week-days": _.template('<% for (var group in events) { %><div class="group event-info"><%= group%></div><% _.each(events[group], function(event){ %><div class="cal-row-fluid"><div class="cal-cell<%= event.days%> cal-offset<%= event.start_day %> day-highlight dh-<%= event[\'class\'] %>" data-event-class="<%= event[\'class\'] %>"><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>" class="cal-event-week event<%= event.id %>"><%= event.title %></a></div></div><% }); %><% } %>'),
       "year": _.template('<div class="cal-year-box"><div class="row row-fluid cal-before-eventlist"><div class="span3 col-md-3 cal-cell" data-cal-row="-month1"><%= cal._month(0) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month2"><%= cal._month(1) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month3"><%= cal._month(2) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month4"><%= cal._month(3) %></div></div><div class="row row-fluid cal-before-eventlist"><div class="span3 col-md-3 cal-cell" data-cal-row="-month1"><%= cal._month(4) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month2"><%= cal._month(5) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month3"><%= cal._month(6) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month4"><%= cal._month(7) %></div></div><div class="row row-fluid cal-before-eventlist"><div class="span3 col-md-3 cal-cell" data-cal-row="-month1"><%= cal._month(8) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month2"><%= cal._month(9) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month3"><%= cal._month(10) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month4"><%= cal._month(11) %></div></div></div>'),
       "year-month": _.template('<span class="pull-right" data-cal-date="<%= data_day %>" data-cal-view="month"><%= month_name %></span><% if (events.length > 0) { %><small class="cal-events-num badge badge-important pull-left"><%= events.length %></small><div class="hide events-list" data-cal-start="<%= start %>" data-cal-end="<%= end %>"><% _.each(events, function(event) { %><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>" data-event-class="<%= event[\'class\'] %>" class="pull-left event <%= event[\'class\'] %> event<%= event.id %>" data-toggle="tooltip" title="<%= event.title %>"></a><% }); %></div><% } %>')
@@ -394,7 +394,12 @@ if(!String.prototype.formatNum) {
   }
 
   function Calendar(params, context) {
-    this.options = $.extend(true, {position: {start: new Date(), end: new Date()}}, defaults, params);
+    this.options = $.extend(true, {
+      position: {
+        start: moment(new Date()),
+        end: moment(new Date())
+      }
+    }, defaults, params);
     this.setLanguage(this.options.language);
     this.context = context;
 
@@ -403,6 +408,10 @@ if(!String.prototype.formatNum) {
     this.view();
     $(context).data('bs-calendar', this);
     return this;
+  }
+
+  Calendar.prototype.reload = function() {
+    this.view();
   }
 
   Calendar.prototype.setOptions = function(object) {
@@ -440,11 +449,7 @@ if(!String.prototype.formatNum) {
       data.days_name = [this.locale.d0, this.locale.d1, this.locale.d2, this.locale.d3, this.locale.d4, this.locale.d5, this.locale.d6]
     }
 
-    // Get all events between start and end
-    var start = parseInt(this.options.position.start.getTime());
-    var end = parseInt(this.options.position.end.getTime());
-
-    data.events = this.getEventsBetween(start, end);
+    data.events = this.getEventsBetween(this.options.position.start, this.options.position.end);
 
     switch(this.options.view) {
       case 'month':
@@ -460,7 +465,7 @@ if(!String.prototype.formatNum) {
         break;
     }
 
-    data.start = new Date(this.options.position.start.getTime());
+    data.start = this.options.position.start;
     data.lang = this.locale;
 
     this.context.append(this.options.templates[this.options.view](data));
@@ -484,10 +489,10 @@ if(!String.prototype.formatNum) {
     var lines = data.hours * time_split_count - parseInt(time_start[1]) / time_split;
     var ms_per_line = (60000 * time_split);
 
-    var start = new Date(this.options.position.start.getTime());
+    var start = this.options.position.start.toDate();
     start.setHours(time_start[0]);
     start.setMinutes(time_start[1]);
-    var end = new Date(this.options.position.end.getTime());
+    var end = this.options.position.end.toDate();
     end.setHours(time_end[0]);
     end.setMinutes(time_end[1]);
 
@@ -496,38 +501,38 @@ if(!String.prototype.formatNum) {
     data.after_time = [];
     data.before_time = [];
     $.each(data.events, function(k, e) {
-      var s = new Date(parseInt(e.start));
-      var f = new Date(parseInt(e.end));
+      var s = $self._convertDateToMoment(e.start).toDate();
+      var f = $self._convertDateToMoment(e.end).toDate();
 
       e.start_hour = s.getHours().toString().formatNum(2) + ':' + s.getMinutes().toString().formatNum(2);
       e.end_hour = f.getHours().toString().formatNum(2) + ':' + f.getMinutes().toString().formatNum(2);
 
-      if(e.start < start.getTime()) {
+      if(s < start) {
         warn(1);
         e.start_hour = s.getDate() + ' ' + $self.locale['ms' + s.getMonth()] + ' ' + e.start_hour;
       }
 
-      if(e.end > end.getTime()) {
+      if(f > end) {
         warn(1);
         e.end_hour = f.getDate() + ' ' + $self.locale['ms' + f.getMonth()] + ' ' + e.end_hour;
       }
 
-      if(e.start < start.getTime() && e.end > end.getTime()) {
+      if(s < start && f > end) {
         data.all_day.push(e);
         return;
       }
 
-      if(e.end < start.getTime()) {
+      if(f < start) {
         data.before_time.push(e);
         return;
       }
 
-      if(e.start > end.getTime()) {
+      if(s > end) {
         data.after_time.push(e);
         return;
       }
 
-      var event_start = start.getTime() - e.start;
+      var event_start = start.getTime() - s.getTime();
 
       if(event_start >= 0) {
         e.top = 0;
@@ -536,9 +541,9 @@ if(!String.prototype.formatNum) {
       }
 
       var lines_left = Math.abs(lines - e.top);
-      var lines_in_event = (e.end - e.start) / ms_per_line;
+      var lines_in_event = (f.getTime() - s.getTime()) / ms_per_line;
       if(event_start >= 0) {
-        lines_in_event = (e.end - start.getTime()) / ms_per_line;
+        lines_in_event = (f.getTime() - start.getTime()) / ms_per_line;
       }
 
 
@@ -572,26 +577,30 @@ if(!String.prototype.formatNum) {
 
   Calendar.prototype._week = function(event) {
     var t = {};
-    var start = parseInt(this.options.position.start.getTime());
-    var end = parseInt(this.options.position.end.getTime());
+    var start = this.options.position.start.toDate().getTime();
+    var end = this.options.position.end.toDate().getTime();
     var events = [];
     var self = this;
     var first_day = getExtentedOption(this, 'first_day');
 
     $.each(this.getEventsBetween(start, end), function(k, event) {
-      event.start_day = new Date(parseInt(event.start)).getDay();
+      var eventStart = self._convertDateToMoment(event.start);
+      var eventEnd = self._convertDateToMoment(event.end);
+      var startMs = eventStart.toDate().getTime();
+      var endMs = eventEnd.toDate().getTime();
+
+      event.start_day = eventStart.day();
       if(first_day == 1) {
         event.start_day = (event.start_day + 6) % 7;
       }
-      if((event.end - event.start) <= 86400000) {
+      if((endMs - startMs) <= 86400000) {
         event.days = 1;
       } else {
-        event.days = ((event.end - event.start) / 86400000);
+        event.days = ((endMs - startMs) / 86400000);
       }
 
-      if(event.start < start) {
-
-        event.days = event.days - ((start - event.start) / 86400000);
+      if(startMs < start) {
+        event.days = event.days - ((start - startMs) / 86400000);
         event.start_day = 0;
       }
 
@@ -611,12 +620,11 @@ if(!String.prototype.formatNum) {
   Calendar.prototype._month = function(month) {
     var t = {cal: this};
     var newmonth = month + 1;
-    t.data_day = this.options.position.start.getFullYear() + '-' + (newmonth < 10 ? '0' + newmonth : newmonth) + '-' + '01';
+    t.data_day = this.options.position.start.year() + '-' + (newmonth < 10 ? '0' + newmonth : newmonth) + '-' + '01';
     t.month_name = this.locale['m' + month];
 
-    var curdate = new Date(this.options.position.start.getFullYear(), month, 1, 0, 0, 0);
-    t.start = parseInt(curdate.getTime());
-    t.end = parseInt(new Date(this.options.position.start.getFullYear(), month + 1, 1, 0, 0, 0).getTime());
+    t.start = moment(new Date(this.options.position.start.year(), month, 1, 0, 0, 0));
+    t.end = moment(new Date(this.options.position.start.year(), month + 1, 1, 0, 0, 0));
     t.events = this.getEventsBetween(t.start, t.end);
     return this.options.templates['year-month'](t);
   }
@@ -625,7 +633,7 @@ if(!String.prototype.formatNum) {
     var t = {tooltip: '', cal: this};
     var cls = this.options.classes.months.outmonth;
 
-    var firstday = this.options.position.start.getDay();
+    var firstday = this.options.position.start.day();
     if(getExtentedOption(this, 'first_day') == 2) {
       firstday++;
     } else {
@@ -633,14 +641,14 @@ if(!String.prototype.formatNum) {
     }
 
     day = (day - firstday) + 1;
-    var curdate = new Date(this.options.position.start.getFullYear(), this.options.position.start.getMonth(), day, 0, 0, 0);
+    var curdate = new Date(this.options.position.start.year(), this.options.position.start.month(), day, 0, 0, 0);
 
     // if day of the current month
     if(day > 0) {
       cls = this.options.classes.months.inmonth;
     }
     // stop cycling table rows;
-    var daysinmonth = (new Date(this.options.position.end.getTime() - 1)).getDate();
+    var daysinmonth = (new Date(this.options.position.end.toDate().getTime() - 1)).getDate();
     if((day + 1) > daysinmonth) {
       this.stop_cycling = true;
     }
@@ -650,15 +658,15 @@ if(!String.prototype.formatNum) {
       cls = this.options.classes.months.outmonth;
     }
 
-    cls = $.trim(cls + " " + this._getDayClass("months", curdate));
+    cls = $.trim(cls + " " + this._getDayClass("months", moment(curdate)));
 
     if(day <= 0) {
-      var daysinprevmonth = (new Date(this.options.position.start.getFullYear(), this.options.position.start.getMonth(), 0)).getDate();
+      var daysinprevmonth = (new Date(this.options.position.start.year(), this.options.position.start.month(), 0)).getDate();
       day = daysinprevmonth - Math.abs(day);
       cls += ' cal-month-first-row';
     }
 
-    var holiday = this._getHoliday(curdate);
+    var holiday = this._getHoliday(moment(curdate));
     if(holiday !== false) {
       t.tooltip = holiday;
     }
@@ -667,8 +675,8 @@ if(!String.prototype.formatNum) {
     t.cls = cls;
     t.day = day;
 
-    t.start = parseInt(curdate.getTime());
-    t.end = parseInt(t.start + 86400000);
+    t.start = moment(curdate);
+    t.end = moment(new Date(curdate.getTime() + 86400000));
     t.events = this.getEventsBetween(t.start, t.end);
     // var events = this.getEventsBetween(t.start, t.end);
     // t.events = this.options.views.day.group ? this._groupEvents(events) : { "": events };
@@ -677,10 +685,10 @@ if(!String.prototype.formatNum) {
 
   Calendar.prototype._getHoliday = function(date) {
     var result = false;
-    $.each(getHolidays(this, date.getFullYear()), function() {
+    $.each(getHolidays(this, date.year()), function() {
       var found = false;
       $.each(this.days, function() {
-        if(this.toDateString() == date.toDateString()) {
+        if(date.isSame(this)) {
           found = true;
           return false;
         }
@@ -708,14 +716,14 @@ if(!String.prototype.formatNum) {
       }
     };
     var classes = [];
-    if(date.toDateString() == (new Date()).toDateString()) {
+    if(date.isSame(new Date())) {
       addClass("today", classes);
     }
     var holiday = this._getHoliday(date);
     if(holiday !== false) {
       addClass("holidays", classes);
     }
-    switch(date.getDay()) {
+    switch(date.day()) {
       case 0:
         addClass("sunday", classes);
         break;
@@ -724,7 +732,7 @@ if(!String.prototype.formatNum) {
         break;
     }
 
-    addClass(date.toDateString(), classes);
+    addClass(date.toDate().toDateString(), classes);
 
     return classes.join(" ");
   };
@@ -764,40 +772,40 @@ if(!String.prototype.formatNum) {
     if(where == 'next') {
       switch(this.options.view) {
         case 'year':
-          to.start.setFullYear(this.options.position.start.getFullYear() + 1);
+          to.start.year(this.options.position.start.year() + 1);
           break;
         case 'month':
-          to.start.setMonth(this.options.position.start.getMonth() + 1);
+          to.start.month(this.options.position.start.month() + 1);
           break;
         case 'week':
-          to.start.setDate(this.options.position.start.getDate() + 7);
+          to.start.date(this.options.position.start.date() + 7);
           break;
         case 'day':
-          to.start.setDate(this.options.position.start.getDate() + 1);
+          to.start.date(this.options.position.start.date() + 1);
           break;
       }
     } else if(where == 'prev') {
       switch(this.options.view) {
         case 'year':
-          to.start.setFullYear(this.options.position.start.getFullYear() - 1);
+          to.start.year(this.options.position.start.year() - 1);
           break;
         case 'month':
-          to.start.setMonth(this.options.position.start.getMonth() - 1);
+          to.start.month(this.options.position.start.month() - 1);
           break;
         case 'week':
-          to.start.setDate(this.options.position.start.getDate() - 7);
+          to.start.date(this.options.position.start.date() - 7);
           break;
         case 'day':
-          to.start.setDate(this.options.position.start.getDate() - 1);
+          to.start.date(this.options.position.start.date() - 1);
           break;
       }
     } else if(where == 'today') {
-      to.start.setTime(new Date().getTime());
+      to.start = moment(to.start.toDate().setTime(new Date().getTime()));
     }
     else {
       $.error(this.locale.error_where.format(where))
     }
-    this.options.day = to.start.getFullYear() + '-' + to.start.getMonthFormatted() + '-' + to.start.getDateFormatted();
+    this.options.day = to.start.format("YYYY-MM-DD");
     this.view();
     if(typeof next === "function") {
       next();
@@ -824,16 +832,16 @@ if(!String.prototype.formatNum) {
 
     switch(this.options.view) {
       case 'year':
-        this.options.position.start.setTime(new Date(year, 0, 1).getTime());
-        this.options.position.end.setTime(new Date(year + 1, 0, 1).getTime());
+        this.options.position.start = moment(new Date(year, 0, 1));
+        this.options.position.end = moment(new Date(year + 1, 0, 1));
         break;
       case 'month':
-        this.options.position.start.setTime(new Date(year, month, 1).getTime());
-        this.options.position.end.setTime(new Date(year, month + 1, 1).getTime());
+        this.options.position.start = moment(new Date(year, month, 1));
+        this.options.position.end = moment(new Date(year, month + 1, 1));
         break;
       case 'day':
-        this.options.position.start.setTime(new Date(year, month, day).getTime());
-        this.options.position.end.setTime(new Date(year, month, day + 1).getTime());
+        this.options.position.start = moment(new Date(year, month, day));
+        this.options.position.end = moment(new Date(year, month, day + 1));
         break;
       case 'week':
         var curr = new Date(year, month, day);
@@ -844,8 +852,8 @@ if(!String.prototype.formatNum) {
         else {
           first = curr.getDate() - curr.getDay();
         }
-        this.options.position.start.setTime(new Date(year, month, first).getTime());
-        this.options.position.end.setTime(new Date(year, month, first + 7).getTime());
+        this.options.position.start = moment(new Date(year, month, first));
+        this.options.position.end = moment(new Date(year, month, first + 7));
         break;
       default:
         $.error(this.locale.error_noview.format(this.options.view))
@@ -857,33 +865,33 @@ if(!String.prototype.formatNum) {
     var p = this.options.position.start;
     switch(this.options.view) {
       case 'year':
-        return this.locale.title_year.format(p.getFullYear());
+        return this.locale.title_year.format(p.year());
         break;
       case 'month':
-        return this.locale.title_month.format(this.locale['m' + p.getMonth()], p.getFullYear());
+        return this.locale.title_month.format(this.locale['m' + p.month()], p.year());
         break;
       case 'week':
-        return this.locale.title_week.format(p.getWeek(), p.getFullYear());
+        return this.locale.title_week.format(p.week(), p.year());
         break;
       case 'day':
-        return this.locale.title_day.format(this.locale['d' + p.getDay()], p.getDate(), this.locale['m' + p.getMonth()], p.getFullYear());
+        return this.locale.title_day.format(this.locale['d' + p.day()], p.date(), this.locale['m' + p.month()], p.year());
         break;
     }
     return;
   };
 
   Calendar.prototype.isToday = function() {
-    var now = new Date().getTime();
+    var now = moment();
 
     return ((now > this.options.position.start) && (now < this.options.position.end));
   }
 
   Calendar.prototype.getStartDate = function() {
-    return this.options.position.start;
+    return this.options.position.start.toDate();
   }
 
   Calendar.prototype.getEndDate = function() {
-    return this.options.position.end;
+    return this.options.position.end.toDate();
   }
 
   Calendar.prototype._loadEvents = function() {
@@ -906,8 +914,8 @@ if(!String.prototype.formatNum) {
           loader = function(callback) {
             var events = [];
             var params = {
-              from: moment(self.options.position.start).format("MM/DD/YYYY"),
-              to: moment(self.options.position.end).format("MM/DD/YYYY")
+              from: self.options.position.start.format("MM/DD/YYYY"),
+              to: self.options.position.end.format("MM/DD/YYYY")
             };
             if(browser_timezone.length) {
               params.browser_timezone = browser_timezone;
@@ -1086,12 +1094,12 @@ if(!String.prototype.formatNum) {
     var self = this;
 
     var week = $(document.createElement('div')).attr('id', 'cal-week-box');
-    var start = this.options.position.start.getFullYear() + '-' + this.options.position.start.getMonthFormatted() + '-';
+    var start = this.options.position.start.year() + '-' + this.options.position.start.format("MM") + '-';
     $('.cal-month-box .cal-row-fluid')
       .on('mouseenter', function() {
-        var p = new Date(self.options.position.start);
+        var p = self.options.position.start.toDate();
         var child = $('.cal-cell1:first-child .cal-month-day', this);
-        var day = (child.hasClass('cal-month-first-row') ? 1 : $('[data-cal-date]', child).text());
+        var day = child.hasClass('cal-month-first-row') ? 1 : $('[data-cal-date]', child).text().trim();
         p.setDate(parseInt(day));
         day = (day < 10 ? '0' + day : day);
         week.html(self.locale.week.format(p.getWeek()));
@@ -1151,18 +1159,23 @@ if(!String.prototype.formatNum) {
 
   Calendar.prototype.getEventsBetween = function(start, end) {
     var events = [];
-    $.each(this.options.events, function() {
-      if(this.start == null) {
+    var self = this;
+    $.each(this.options.events, function(index, event) {
+      if(event.start == null) {
         return true;
       }
-      var event_start = isNaN(this.start) ? moment(this.start).toDate().getTime() : parseInt(this.start);
-      var event_end = this.end ? (isNaN(this.end) ? moment(this.end).toDate().getTime() : parseInt(this.end)) : event_start;
+      var event_start = self._convertDateToMoment(event.start);
+      var event_end = self._convertDateToMoment(event.end);
       if ((event_start < end) && (event_end >= start)) {
         events.push(this);
       }
     });
     return events;
   };
+
+  Calendar.prototype._convertDateToMoment = function(date) {
+    return isNaN(date) ? moment(date) : moment(new Date(parseInt(date)));
+  }
 
   function showEventsList(event, that, slider, self) {
 
