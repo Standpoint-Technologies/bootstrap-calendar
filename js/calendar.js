@@ -758,13 +758,14 @@ if(!String.prototype.formatNum) {
 
 
     this._init_position();
-    this._loadEvents();
+    this._loadEvents(function() {
     this._render();
 
     $(this.context).trigger($.Event('view-loaded.bs-calendar', {
       calendar: this,
       view: this.options.view
     }));
+    });
   };
 
   Calendar.prototype.navigate = function(where, next) {
@@ -894,24 +895,24 @@ if(!String.prototype.formatNum) {
     return this.options.position.end.toDate();
   }
 
-  Calendar.prototype._loadEvents = function() {
+  Calendar.prototype._loadEvents = function(callback) {
     var self = this;
     var source = this.options.events_source;
     var loader;
     switch($.type(source)) {
       case 'function':
-        loader = function(callback) {
+        loader = function(loaderCallback) {
           source(self.options.position.start, self.options.position.end, browser_timezone, callback);
         };
         break;
       case 'array':
-        loader = function(callback) {
+        loader = function(loaderCallback) {
           return callback([].concat(source));
         };
         break;
       case 'string':
         if(source.length) {
-          loader = function(callback) {
+          loader = function(loaderCallback) {
             var events = [];
             var params = {
               from: self.options.position.start.format("MM/DD/YYYY"),
@@ -923,25 +924,26 @@ if(!String.prototype.formatNum) {
             $.ajax({
               url: buildEventsUrl(source, params),
               dataType: 'json',
-              type: 'GET',
-              async: false
+              type: 'GET'
             }).done(function(data, status, jqXHR) {
               events = data;
+              if (typeof loaderCallback == "function") {
+                loaderCallback(events);
+              }
             }).fail(function(jqXHR, status, errorThrown) {
               $.error(errorThrown);
             });
-            callback(events);
           };
         }
         break;
     }
     if(!loader) {
-      $.error(this.locale.error_loadurl);
+      $.error(self.locale.error_loadurl);
     }
     var beforeEventsLoadEvent = $.Event('events-loading.bs-calendar', {
-      calendar: this
+      calendar: self
     });
-    $(this.context).trigger(beforeEventsLoadEvent);
+    $(self.context).trigger(beforeEventsLoadEvent);
     if (!beforeEventsLoadEvent.isDefaultPrevented()) {
       loader(function(events) {
         self.options.events = events;
@@ -960,11 +962,15 @@ if(!String.prototype.formatNum) {
           }
           return delta;
         });
-      });
-      $(this.context).trigger($.Event('events-loaded.bs-calendar', {
-        calendar: this,
+
+        $(self.context).trigger($.Event('events-loaded.bs-calendar', {
+          calendar: self,
         events: self.options.events
       }));
+        if (typeof callback == "function") {
+          callback.call(self);
+        }
+      });
     }
   };
 
