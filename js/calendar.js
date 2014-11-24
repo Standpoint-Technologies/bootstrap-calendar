@@ -749,22 +749,23 @@ if(!String.prototype.formatNum) {
   };
 
   Calendar.prototype.view = function(view) {
+    var self = this;
     if(view) {
-      if(!this.options.views[view].enable) {
+      if(!self.options.views[view].enable) {
         return;
       }
-      this.options.view = view;
+      self.options.view = view;
     }
 
 
-    this._init_position();
-    this._loadEvents(function() {
-    this._render();
+    self._init_position();
+    self._loadEvents(function() {
+      self._render();
 
-    $(this.context).trigger($.Event('view-loaded.bs-calendar', {
-      calendar: this,
-      view: this.options.view
-    }));
+      $(self.context).trigger($.Event('view-loaded.bs-calendar', {
+        calendar: self,
+        view: self.options.view
+      }));
     });
   };
 
@@ -902,12 +903,12 @@ if(!String.prototype.formatNum) {
     switch($.type(source)) {
       case 'function':
         loader = function(loaderCallback) {
-          source(self.options.position.start, self.options.position.end, browser_timezone, callback);
+          source(self.options.position.start, self.options.position.end, browser_timezone, loaderCallback);
         };
         break;
       case 'array':
         loader = function(loaderCallback) {
-          return callback([].concat(source));
+          return loaderCallback([].concat(source));
         };
         break;
       case 'string':
