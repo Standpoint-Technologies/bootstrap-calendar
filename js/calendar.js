@@ -159,7 +159,7 @@ if(!String.prototype.formatNum) {
       "modal": _.template('<% 	event.date_start = new Date(parseInt(event.start));event.date_end = new Date(parseInt(event.end)); %><div id = "event-meta" class  = "pull-right"><span>Starts on <%= event.date_start.date() %> <%= calendar.locale["m" + event.date_start.month()] %> <%= event.date_start.year() %>, at <%= event.date_start.format(\'hh:mm\') %> <i class = "icon-time"></i></span><br /><span>Ends on <%= event.date_end.date() %> <%= calendar.locale["m" + event.date_end.month()] %> <%= event.date_end.year() %> at <%= event.date_end.format(\'hh:mm\') %> <i class = "icon-time"></i></span><br /></div><div style = "margin: 10px 0"><a href = "<%= event.url %>" class = "btn btn-primary"><i class = "icon-calendar"></i> More info</a></div>'),
       "month": _.template('<div class="cal-row-fluid cal-row-head"><% _.each(days_name, function(name){ %><div class="cal-cell1"><%= name %></div><% }) %></div><div class="cal-month-box"><% for(i = 0; i < 6; i++) { %><% if(cal.stop_cycling == true) break; %><div class="cal-row-fluid cal-before-eventlist"><div class="cal-cell1 cal-cell" data-cal-row="-day1"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day2"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day3"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day4"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day5"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day6"><%= cal._day(i, day++) %></div><div class="cal-cell1 cal-cell" data-cal-row="-day7"><%= cal._day(i, day++) %></div></div><% } %></div>'),
       "month-day": _.template('<div class="cal-month-day <%= cls %>"><span class="pull-right" data-cal-date="<%= data_day %>" data-cal-view="day" data-toggle="tooltip" title="<%= tooltip %>"><%= day %></span><% if (events.length > 0) { %><div class="events-list" data-cal-start="<%= start %>" data-cal-end="<%= end %>"><% _.each(events, function(event) { %><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>" data-event-class="<%= event[\'class\'] %>"class="pull-left event <%= event[\'class\'] %>" data-toggle="tooltip"title="<%= event.title %>"></a><% }); %></div><% } %></div>'),
-      "week": _.template('<div class="cal-week-box"><div class="cal-offset1 cal-column"></div><div class="cal-offset2 cal-column"></div><div class="cal-offset3 cal-column"></div><div class="cal-offset4 cal-column"></div><div class="cal-offset5 cal-column"></div><div class="cal-offset6 cal-column"></div><div class="cal-row-fluid cal-row-head"><% _.each(days_name, function(name) { %><div class="cal-cell1 <%= cal._getDayClass(\'week\', start) %>" data-toggle="tooltip" title="<%= cal._getHolidayName(start) %>"><%= name %><br><small><span data-cal-date="<%= start.format(\'YYYY-MM-DD\') %>" data-cal-view="day"><%= start.date() %> <%= cal.locale[\'ms\' + start.month()] %></span></small></div><% start.date(start.date() + 1); %><% }) %></div><hr><%= cal._week() %></div>'),
+      "week": _.template('<div class="cal-week-box"><div class="cal-offset1 cal-column"></div><div class="cal-offset2 cal-column"></div><div class="cal-offset3 cal-column"></div><div class="cal-offset4 cal-column"></div><div class="cal-offset5 cal-column"></div><div class="cal-offset6 cal-column"></div><div class="cal-row-fluid cal-row-head"><% _.each(days_name, function(name) { %><div class="cal-cell1 <%= cal._getDayClass(\'week\', start) %>" data-toggle="tooltip" title="<%= cal._getHolidayName(start) %>"><%= name %><br><small><span data-cal-date="<%= start.format(\'YYYY-MM-DD\') %>" data-cal-view="day"><%= start.date() %> <%= cal.locale[\'ms\' + start.month()] %></span></small></div><% start = start.clone().date(start.date() + 1); %><% }) %></div><hr><%= cal._week() %></div>'),
       "week-days": _.template('<% for (var group in events) { %><div class="group event-info"><%= group%></div><% _.each(events[group], function(event){ %><div class="cal-row-fluid"><div class="cal-cell<%= event.days%> cal-offset<%= event.start_day %> day-highlight dh-<%= event[\'class\'] %>" data-event-class="<%= event[\'class\'] %>"><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>" class="cal-event-week event<%= event.id %>"><%= event.title %></a></div></div><% }); %><% } %>'),
       "year": _.template('<div class="cal-year-box"><div class="row row-fluid cal-before-eventlist"><div class="span3 col-md-3 cal-cell" data-cal-row="-month1"><%= cal._month(0) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month2"><%= cal._month(1) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month3"><%= cal._month(2) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month4"><%= cal._month(3) %></div></div><div class="row row-fluid cal-before-eventlist"><div class="span3 col-md-3 cal-cell" data-cal-row="-month1"><%= cal._month(4) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month2"><%= cal._month(5) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month3"><%= cal._month(6) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month4"><%= cal._month(7) %></div></div><div class="row row-fluid cal-before-eventlist"><div class="span3 col-md-3 cal-cell" data-cal-row="-month1"><%= cal._month(8) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month2"><%= cal._month(9) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month3"><%= cal._month(10) %></div><div class="span3 col-md-3 cal-cell" data-cal-row="-month4"><%= cal._month(11) %></div></div></div>'),
       "year-month": _.template('<span class="pull-right" data-cal-date="<%= data_day %>" data-cal-view="month"><%= month_name %></span><% if (events.length > 0) { %><small class="cal-events-num badge badge-important pull-left"><%= events.length %></small><div class="hide events-list" data-cal-start="<%= start %>" data-cal-end="<%= end %>"><% _.each(events, function(event) { %><a href="<%= event.url ? event.url : \'javascript:void(0)\' %>" data-event-id="<%= event.id %>" data-event-class="<%= event[\'class\'] %>" class="pull-left event <%= event[\'class\'] %> event<%= event.id %>" data-toggle="tooltip" title="<%= event.title %>"></a><% }); %></div><% } %>')
@@ -575,10 +575,10 @@ if(!String.prototype.formatNum) {
     return h.formatNum(2) + ":" + m.formatNum(2);
   };
 
-  Calendar.prototype._week = function(event) {
+  Calendar.prototype._week = function() {
     var t = {};
-    var start = this.options.position.start.toDate().getTime();
-    var end = this.options.position.end.toDate().getTime();
+    var start = this.options.position.start.clone();
+    var end = this.options.position.end.clone();
     var events = [];
     var self = this;
     var first_day = getExtentedOption(this, 'first_day');
@@ -802,9 +802,8 @@ if(!String.prototype.formatNum) {
           break;
       }
     } else if(where == 'today') {
-      to.start = moment(to.start.toDate().setTime(new Date().getTime()));
-    }
-    else {
+      to.start = moment();
+    } else {
       $.error(this.locale.error_where.format(where))
     }
     this.options.day = to.start.format("YYYY-MM-DD");
@@ -827,8 +826,7 @@ if(!String.prototype.formatNum) {
       year = parseInt(list[0], 10);
       month = parseInt(list[1], 10) - 1;
       day = parseInt(list[2], 10);
-    }
-    else {
+    } else {
       $.error(this.locale.error_dateformat.format(this.options.day));
     }
 
@@ -850,8 +848,7 @@ if(!String.prototype.formatNum) {
         var first;
         if(getExtentedOption(this, 'first_day') == 1) {
           first = curr.getDate() - ((curr.getDay() + 6) % 7);
-        }
-        else {
+        } else {
           first = curr.getDate() - curr.getDay();
         }
         this.options.position.start = moment(new Date(year, month, first));
@@ -1167,14 +1164,14 @@ if(!String.prototype.formatNum) {
   Calendar.prototype.getEventsBetween = function(start, end) {
     var events = [];
     var self = this;
-    $.each(this.options.events, function(index, event) {
+    $.each(self.options.events, function(index, event) {
       if(event.start == null) {
         return true;
       }
       var event_start = self._convertDateToMoment(event.start);
       var event_end = self._convertDateToMoment(event.end);
       if ((event_start < end) && (event_end >= start)) {
-        events.push(this);
+        events.push(event);
       }
     });
     return events;
