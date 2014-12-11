@@ -168,7 +168,8 @@ if(!String.prototype.formatNum) {
     // INTERNAL USE ONLY. DO NOT ASSIGN IT WILL BE OVERRIDDEN ANYWAY
     // -------------------------------------------------------------
     events: [],
-    stop_cycling: false
+    stop_cycling: false,
+	week_hover: true
   };
 
   var defaults_extended = {
@@ -1106,8 +1107,11 @@ if(!String.prototype.formatNum) {
         var day = child.hasClass('cal-month-first-row') ? 1 : $('[data-cal-date]', child).text().trim();
         p.setDate(parseInt(day));
         day = (day < 10 ? '0' + day : day);
-        week.html(self.locale.week.format(p.getWeek()));
-        week.attr('data-cal-week', start + day).show().appendTo(child);
+		
+		if(self.options.week_hover) {
+			week.html(self.locale.week.format(p.getWeek()));
+			week.attr('data-cal-week', start + day).show().appendTo(child);
+		}
       })
       .on('mouseleave', function() {
         week.hide();
