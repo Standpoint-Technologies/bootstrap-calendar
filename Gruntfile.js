@@ -44,7 +44,7 @@ module.exports = function(grunt) {
 			options: {
 				banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
 					'<%= grunt.template.today("yyyy-mm-dd") %> - ' +
-					'https://github.com/Serhioromano/bootstrap-calendar */\n'
+					'https://github.com/Standpoint-Technologies/bootstrap-calendar */\n'
 			},
 			build: {
 				src: 'js/calendar.js',
