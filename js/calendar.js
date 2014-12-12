@@ -255,16 +255,11 @@ if(!String.prototype.formatNum) {
     d6: 'Saturday'
   };
 
-  var browser_timezone = '';
+  var browser_timezone = null;
   try {
-    if($.type(window.jstz) == 'object' && $.type(jstz.determine) == 'function') {
-      browser_timezone = jstz.determine().name();
-      if($.type(browser_timezone) !== 'string') {
-        browser_timezone = '';
-      }
-    }
-  }
-  catch(e) {
+    browser_timezone = moment().zone();
+  } catch(e) {
+    $.error('Error detecting timezone');
   }
 
   function buildEventsUrl(events_url, data) {
@@ -915,11 +910,9 @@ if(!String.prototype.formatNum) {
             var events = [];
             var params = {
               from: self.options.position.start.format("MM/DD/YYYY"),
-              to: self.options.position.end.format("MM/DD/YYYY")
+              to: self.options.position.end.format("MM/DD/YYYY"),
+              browser_timezone: browser_timezone
             };
-            if(browser_timezone.length) {
-              params.browser_timezone = browser_timezone;
-            }
             $.ajax({
               url: buildEventsUrl(source, params),
               dataType: 'json',
@@ -1107,7 +1100,7 @@ if(!String.prototype.formatNum) {
         var day = child.hasClass('cal-month-first-row') ? 1 : $('[data-cal-date]', child).text().trim();
         p.setDate(parseInt(day));
         day = (day < 10 ? '0' + day : day);
-		
+
 		if(self.options.week_hover) {
 			week.html(self.locale.week.format(p.getWeek()));
 			week.attr('data-cal-week', start + day).show().appendTo(child);
