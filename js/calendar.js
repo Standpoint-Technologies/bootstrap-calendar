@@ -169,7 +169,8 @@ if(!String.prototype.formatNum) {
     // -------------------------------------------------------------
     events: [],
     stop_cycling: false,
-	week_hover: true
+	week_hover: true,
+	week_vertical: false
   };
 
   var defaults_extended = {
@@ -213,6 +214,7 @@ if(!String.prototype.formatNum) {
     title_day: '{0} {1} {2}, {3}',
 
     week: 'Week {0}',
+	week_vertical: 'W<br/>e<br/>e<br/>k<br/><br/>{0}',
     all_day: 'All day',
     time: 'Time',
     events: 'Events',
@@ -913,6 +915,9 @@ if(!String.prototype.formatNum) {
               to: self.options.position.end.format("MM/DD/YYYY"),
               browser_timezone: browser_timezone
             };
+			if(browser_timezone.length) {
+              params.browser_timezone = browser_timezone;
+            }
             $.ajax({
               url: buildEventsUrl(source, params),
               dataType: 'json',
@@ -1102,9 +1107,16 @@ if(!String.prototype.formatNum) {
         day = (day < 10 ? '0' + day : day);
 
 		if(self.options.week_hover) {
-			week.html(self.locale.week.format(p.getWeek()));
-			week.attr('data-cal-week', start + day).show().appendTo(child);
-		}
+          if(self.options.week_vertical) {
+              week.html(self.locale.week_vertical.format(p.getWeek()));
+              week.addClass('cal-week-box-vertical');
+          }
+          else {
+              week.html(self.locale.week.format(p.getWeek()));
+          }
+
+          week.attr('data-cal-week', start + day).show().appendTo(child);
+        }
       })
       .on('mouseleave', function() {
         week.hide();

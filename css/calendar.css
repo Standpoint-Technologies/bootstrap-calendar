@@ -540,3 +540,11 @@ a.cal-event-week {
 .badge-important {
   background-color: #b94a48;
 }
+.cal-week-box-vertical{
+  width: 25px !important;
+  left: -26px !important;
+  text-align: center !important;
+  font-size: 11px !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
