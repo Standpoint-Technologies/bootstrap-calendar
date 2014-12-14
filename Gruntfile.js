@@ -4,6 +4,14 @@ module.exports = function(grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 
+		bower: {
+			install: {
+				options: {
+					targetDir: './components'
+				}
+			}
+		},
+
 		connect: {
 			server: {
 				options: {
@@ -68,14 +76,15 @@ module.exports = function(grunt) {
 	});
 
 	// Load the plugin that provides the tasks.
+	grunt.loadNpmTasks('grunt-bower-task');
 	grunt.loadNpmTasks('grunt-contrib-connect');
 	grunt.loadNpmTasks('grunt-contrib-less');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	// Default task(s).
-	grunt.registerTask('default', ['less:css', 'less:css_min', 'uglify']);
+	grunt.registerTask('default', ['bower:install', 'less:css', 'less:css_min', 'uglify']);
 
-	grunt.registerTask('server', ['connect:server', 'watch']);
+	grunt.registerTask('server', ['bower:install', 'connect:server', 'watch']);
 
 };
