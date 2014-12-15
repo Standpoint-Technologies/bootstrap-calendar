@@ -898,7 +898,7 @@ if(!String.prototype.formatNum) {
     switch($.type(source)) {
       case 'function':
         loader = function(loaderCallback) {
-          source(self.options.position.start, self.options.position.end, browser_timezone, loaderCallback);
+          source.call(self, self.options.position.start, self.options.position.end, browser_timezone, loaderCallback);
         };
         break;
       case 'array':
