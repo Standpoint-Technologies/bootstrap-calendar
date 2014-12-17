@@ -976,7 +976,13 @@ if(!String.prototype.formatNum) {
 
     $('*[data-toggle="tooltip"]').tooltip({container: 'body'});
 
-    $('*[data-cal-date]').click(function() {
+    $('*[data-cal-date]').click(function(e) {
+      var clickEvent = $.Event('calendar.cell.label.click', {
+        originalEvent: e
+      });
+
+      $(self.context).trigger(clickEvent);
+
       var view = $(this).data('cal-view');
       self.options.day = $(this).data('cal-date');
       self.view(view);
@@ -1156,9 +1162,20 @@ if(!String.prototype.formatNum) {
       .on('click', function(event) {
         if($('.events-list', this).length == 0) return;
         if($(this).children('[data-cal-date]').text() == self.activecell) return;
-        showEventsList(event, downbox, slider, self);
-      })
-    ;
+
+        var clickEvent = $.Event('calendar.day.click', {
+          _this: $(this),
+          downbox: downbox,
+          slider: slider,
+          calendar: self
+        });
+
+        $(self.context).trigger(clickEvent);
+
+        if (!clickEvent.isDefaultPrevented()) {
+          showEventsList(event, downbox, slider, self);
+        }
+      });
 
     var slider = $(document.createElement('div')).attr('id', 'cal-slide-box');
     slider.hide().click(function(event) {
