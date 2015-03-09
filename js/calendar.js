@@ -674,7 +674,7 @@ if(!String.prototype.formatNum) {
     t.day = day;
 
     t.start = moment(curdate);
-    t.end = moment(new Date(curdate.getTime() + 86400000));
+    t.end = t.start.clone().endOf('day');
     t.events = this.getEventsBetween(t.start, t.end);
     // var events = this.getEventsBetween(t.start, t.end);
     // t.events = this.options.views.day.group ? this._groupEvents(events) : { "": events };
