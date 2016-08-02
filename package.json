@@ -3,9 +3,7 @@
   "version": "0.2.6",
   "description": "Bootstrap full view calendar",
   "homepage": "https://github.com/Standpoint-Technologies/bootstrap-calendar",
-  "main": [
-    "./js/calendar.js"
-  ],
+  "main": "./js/calendar.js",
   "scripts": {
     "test": ""
   },
